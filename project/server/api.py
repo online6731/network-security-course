@@ -2,7 +2,18 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return 'Hey, we have Flask in a Docker container!'
+@app.route('/interfaces')
+def interfaces():
+    """sends a list all available interfaces"""
 
+    return {
+        data: []
+        }
+
+@app.route('/analyse_pcap')
+def analyse_pcap():
+    """analyse a pcap file and returns the result"""
+
+    return {
+        data: {}
+    }

@@ -8,9 +8,10 @@ import threading
 client_sockets = [] #TODO : use proper shared memory methods instead of global vars
 
 class Sniffer():
-    server_socket_ip = ''
-    server_socket_port = 12345
-    server_socket_address = (server_socket_ip, server_socket_port)
+    """
+    This class is responsible for sniffing and analysing packets.
+    It also sends this information over socket to clients.
+    """
 
     @staticmethod
     def get_socket_connections(server_socket):
@@ -23,11 +24,11 @@ class Sniffer():
             client_sockets.append(client_socket)
 
 
-    def start_server_socket(self):
+    def start_server_socket(self, socket_address):
         """starts the socket server"""
 
         server_socket = socket.socket()
-        server_socket.bind(self.server_socket_address)
+        server_socket.bind(socket_address)
         server_socket.listen()
         threading.Thread(target=self.get_socket_connections, args=(server_socket, )).start()
 
@@ -44,11 +45,12 @@ class Sniffer():
                 pass
 
 
-    def start_sniffing(self):
+    def start_sniffing(self, interface):
         """start the packet sniffing process"""
 
-        scapy.sniff(iface='wlp2s0', store=False, prn=self.process_packets)
+        scapy.sniff(iface=interface, store=False, prn=self.process_packets)
 
-    def run(self):
-        self.start_server_socket()
-        self.start_sniffing()
+
+    def run(self, socket_address, interface):
+        self.start_server_socket(socket_address=socket_address)
+        self.start_sniffing(interface=interface)
