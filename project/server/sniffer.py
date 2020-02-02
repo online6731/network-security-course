@@ -42,6 +42,8 @@ class Sniffer():
 
         packet = dict(scapy2dict.to_dict(packet))
 
+
+        # TODO : fix the try-except statements
         try:
             del packet['IP']['options']
         except: pass
