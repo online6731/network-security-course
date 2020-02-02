@@ -3,6 +3,8 @@ import argparse
 import os
 import socketserver
 import threading
+import scapy2dict
+import json
 
 
 client_sockets = [] #TODO : use proper shared memory methods instead of global vars
@@ -38,12 +40,22 @@ class Sniffer():
 
         global client_sockets
 
+        packet = dict(scapy2dict.to_dict(packet))
+
+        try:
+            del packet['IP']['options']
+        except: pass
+
+        try:
+            del packet['TCP']['options']
+        except: pass
+
         for client_socket in client_sockets:
             try:
-                client_socket.send(str(packet.mysummary).encode())
-            except:
-                pass
+                client_socket.send(json.dumps(packet))
+            except: pass
 
+        # print(packet)
 
     def start_sniffing(self, interface):
         """start the packet sniffing process"""
