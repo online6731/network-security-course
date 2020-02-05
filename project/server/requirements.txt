@@ -1,2 +1,4 @@
 flask
-scapy
+kamene
+python-socketio
+flask-socketio

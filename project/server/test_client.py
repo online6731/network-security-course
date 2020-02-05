@@ -1,18 +1,8 @@
+import socketio
 
-# Import socket module
-import socket
+sio = socketio.Client()
+sio.connect('http://localhost:12345')
 
-# Create a socket object
-s = socket.socket()
-
-# Define the port on which you want to connect
-port = 12345
-
-# connect to the server on local computer
-s.connect(('', port))
-
-# receive data from the server
-while True:
-    print(s.recv(1024))
-# close the connection
-s.close()
+@sio.on('new_packet', namespace='/packet')
+def on_new_packet():
+    print("I'm connected to the /chat namespace!")
