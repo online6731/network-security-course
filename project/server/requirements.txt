@@ -2,3 +2,4 @@ flask
 kamene
 python-socketio
 flask-socketio
+scapy2dict
