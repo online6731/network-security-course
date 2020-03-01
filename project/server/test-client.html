@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Chat Room</title>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var socket = io.connect('http://127.0.0.1:5000');
+
+            socket.on('new_packet', function (msg) {
+                $("#messages").append('<li>' + JSON.stringify(JSON.parse(msg)['Ethernet']) + '</li>');
+                console.log(JSON.parse(msg)['Ethernet']);
+            });
+
+            setInterval(() => {
+                socket.emit('client_state', 'ready');
+            }, 10);
+        });
+    </script>
+
+    <ul id="messages"></ul>
+
+</body>
+
+</html>

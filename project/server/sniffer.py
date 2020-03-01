@@ -1,49 +1,47 @@
+from flask_socketio import emit
 from kamene.all import *
-import argparse
-import os
-import socketserver
-import threading
-import scapy2dict
 import json
-from api import send_packet
+import scapy2dict
+import threading
+import os
+from socket_api import socketio
+# from kamene.config import conf
+# conf.ipv6_enabled = False
 
-client_sockets = [] #TODO : use proper shared memory methods instead of global vars
 
-class Sniffer():
+class Sniffer:
     """
     This class is responsible for sniffing and analysing packets.
     It also sends this information over socket to clients.
     """
 
+    def __init__(self, interface):
+        # self.sock = sock
+        self.interface = interface
+
     def process_packets(self, packet):
         """process and analyse receiving packet and send the result over socket to all clients"""
 
-        global client_sockets
-
         packet = dict(scapy2dict.to_dict(packet))
-
 
         # TODO : fix the try-except statements
         try:
             del packet['IP']['options']
-        except: pass
+        except:
+            pass
 
         try:
             del packet['TCP']['options']
-        except: pass
+        except:
+            pass
 
-        for client_socket in client_sockets:
-            try:
-                client_socket.send(json.dumps(packet))
-            except: pass
+        from random import randint
+        if randint(1, 100) == 100:
+            print(packet)
+            socketio.emit('new_packet', " {'packet': packet}", broadcast=True)
+            socketio.send(" {'packet': packet}", broadcast=True)
 
-        # print(packet)
-
-    def start_sniffing(self, interface):
+    def run(self):
         """start the packet sniffing process"""
 
-        sniff(iface=interface, store=False, prn=self.process_packets)
-
-
-    def run(self, interface):
-        self.start_sniffing(interface=interface)
+        sniff(iface=self.interface, store=False, prn=self.process_packets)
